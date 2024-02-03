@@ -24,6 +24,7 @@ class _Connect4State extends State<Connect4> {
   late Player _turnPlayer;
   List<GridPoint>? _winningSequence;
   late final WinningSequenceChecker _winChecker;
+  bool _borderShown = true;
 
   @override
   void initState() {
@@ -86,8 +87,16 @@ class _Connect4State extends State<Connect4> {
                         child: InkWell(
                           onTap: () => _tryInsertToken(colIndex),
                           child: Container(
-                            color: const Color(0xff66aaff),
                             padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: const Color(0xff66aaff),
+                              border: _borderShown
+                                  ? Border.all(
+                                      width: 1,
+                                      color: const Color(0xff000000),
+                                    )
+                                  : null,
+                            ),
                             child: owner == null
                                 ? null
                                 : Token(
@@ -109,10 +118,24 @@ class _Connect4State extends State<Connect4> {
           ),
         ),
       ),
-      floatingActionButton: IconButton(
-        color: _turnPlayer.color,
-        onPressed: _reset,
-        icon: const Icon(Icons.restart_alt_rounded),
+      floatingActionButton: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          IconButton(
+            color: _turnPlayer.color,
+            onPressed: () {
+              setState(() {
+                _borderShown = !_borderShown;
+              });
+            },
+            icon: const Icon(Icons.border_all),
+          ),
+          IconButton(
+            color: _turnPlayer.color,
+            onPressed: _reset,
+            icon: const Icon(Icons.restart_alt_rounded),
+          ),
+        ],
       ),
     );
   }
